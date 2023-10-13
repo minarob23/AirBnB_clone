@@ -1,10 +1,12 @@
 <h1 align="center">
-  0x16. C - Simple Shell
+0x00. AirBnB clone - The console
 </h1>
 
 <p align="center">
    📄 🚀
 </p>
+
+![image](https://github.com/minarob23/AirBnB_clone/assets/102999008/b0a1dbdc-b4b5-4fcf-a630-5445b628f5d4)
 
 # Description
 Project is done by  [**Mina Robir**](https://github.com/minarob23)
@@ -87,6 +89,8 @@ EOF  help  quit
 $
 ```
 All tests should also pass in non-interactive mode:`$ echo "python3 -m unittest discover tests" | bash`
+
+![image](https://github.com/minarob23/AirBnB_clone/assets/102999008/106dce12-840c-41a8-99b9-d3a5a9df6749)
 
 # Authors 
 [**Mina Robir**](https://github.com/minarob23)
