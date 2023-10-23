@@ -1,62 +1,63 @@
 #!/usr/bin/python3
-"""
-Module: base.py
-"""
-import models
-import uuid
+"""Defines the BaseModel class."""
+
+
+from os.path import isfile
+from models import storage
+from uuid import uuid4
 from datetime import datetime
 
 
-class BaseModel():
-    """
-    Base class which defines all common
-    attributes/methods for other classes
-    """
+class BaseModel:
+    """BaseModel for all BnB project"""
 
     def __init__(self, *args, **kwargs):
+        """Initializes a new BaseModel:
+
+        Args:
+            *args: Unused for now.
+            **Kwargs: Key/values of pairs of attributes.
         """
-        instatiates an object with it's
-        attributes
-        """
-        if len(kwargs) > 0:
+        timeDisplay = "%Y-%m-%dT%H:%M:%S.%f"
+        if len(kwargs) == 0:
+            self.id = str(uuid4())
+            self.created_at = datetime.now()
+            self.updated_at = datetime.now()
+            storage.new(self)
+        else:
+            kwargs.pop('__class__')
             for key, value in kwargs.items():
-                if key == '__class__':
-                    continue
-                if key == "created_at" or key == "updated_at":
-                    value = datetime.fromisoformat(value)
-                setattr(self, key, value)
-            return
-
-        self.id = str(uuid.uuid4())
-        self.created_at = datetime.now()
-        self.updated_at = datetime.now()
-
-        models.storage.new(self)
-
-    def __str__(self):
-        """
-        Returns the string representation
-        of the instance
-        """
-        return "[{}] ({}) {}".format(
-            type(self).__name__, self.id, self.__dict__)
+                if key is "created_at" or key is "updated_at":
+                    self.__dict__[key] = datetime.strptime(value,
+                                                           timeDisplay)
+                else:
+                    setattr(self, key, value)
 
     def save(self):
-        """
-        updates the public instance attribute
-        updated_at with the current datetime
-        """
+        """Saves updated_at with the current datetime"""
         self.updated_at = datetime.now()
-        models.storage.save()
+        storage.new(self)
+        storage.save()
 
     def to_dict(self):
-        """
-        returns a dictionary containing all keys/values
-        of __dict__ of the instance
-        """
-        dict = {**self.__dict__}
-        dict['__class__'] = type(self).__name__
-        dict['created_at'] = dict['created_at'].isoformat()
-        dict['updated_at'] = dict['updated_at'].isoformat()
+        """Updates dictionary and returns BaseModel instance.
 
-        return dict
+        returns class name of object
+        value key/pair included
+        """
+        timeDisplay = "%Y-%m-%dT%H:%M:%S.%f"
+        UpdateDictionary = self.__dict__.copy()
+        if (type(self.updated_at)) is str:
+            self.updated_at = datetime.strptime(self.updated_at, timeDisplay)
+        if (type(self.created_at)) is str:
+            self.created_at = datetime.strptime(self.created_at, timeDisplay)
+        UpdateDictionary["updated_at"] = datetime.isoformat((self.updated_at))
+        UpdateDictionary["created_at"] = datetime.isoformat((self.created_at))
+        UpdateDictionary["__class__"] = self.__class__.__name__
+        return UpdateDictionary
+
+    def __str__(self):
+        """Returns the print str of BaseModel instance"""
+
+        ClassName = self.__class__.__name__
+        return "[{}] ({}) {}" .format(ClassName, self.id, self.__dict__)
